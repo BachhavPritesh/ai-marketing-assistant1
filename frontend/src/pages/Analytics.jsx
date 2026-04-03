@@ -178,6 +178,10 @@ export default function Analytics() {
 
         {/* ROW 2: TIERED INSIGHTS (Donut + Bars + List) */}
         <div className="an-stats-row">
+          <Card style={{ flex: '0 0 320px' }}>
+            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Platform Breakdown</h4>
+            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Reach distribution by network</p>
+          </Card>
         </div>
       </div>
     </div>
