@@ -175,6 +175,10 @@ export default function Analytics() {
             </div>
           </Card>
         </div>
+
+        {/* ROW 2: TIERED INSIGHTS (Donut + Bars + List) */}
+        <div className="an-stats-row">
+        </div>
       </div>
     </div>
   );
