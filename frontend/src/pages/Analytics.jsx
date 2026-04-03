@@ -105,6 +105,9 @@ export default function Analytics() {
           <h1 style={{ fontSize: 32, fontWeight: 900, color: '#2B2218', margin: '0 0 6px', letterSpacing: '-0.8px' }}>Analytics</h1>
           <p style={{ fontSize: 14, color: '#7A7068', margin: 0 }}>Your cross-platform performance at a glance.</p>
         </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {DATE_RANGES.map(d => <button key={d} style={pill(range === d)} onClick={() => setRange(d)}>{d}</button>)}
+        </div>
       </div>
     </div>
   );
