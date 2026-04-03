@@ -168,6 +168,8 @@ export default function Analytics() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EEE" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 11 }} dy={10} />
                   <YAxis hide />
+                  <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', padding: '12px' }} />
+                  <Area type="monotone" dataKey="followers" stroke="#C9A96E" strokeWidth={4} fillOpacity={1} fill="url(#colorF)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
