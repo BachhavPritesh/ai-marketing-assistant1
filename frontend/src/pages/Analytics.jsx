@@ -152,6 +152,10 @@ export default function Analytics() {
           </Card>
 
           <Card style={{ flex: 1, padding: '24px' }}>
+            <div style={{ marginBottom: 20 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Follower Growth</h3>
+              <p style={{ fontSize: 13, color: '#7A7068', margin: 0 }}>Net new audience (Last 6 months)</p>
+            </div>
           </Card>
         </div>
       </div>
