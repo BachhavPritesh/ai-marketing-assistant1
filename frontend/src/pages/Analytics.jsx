@@ -132,6 +132,8 @@ export default function Analytics() {
       <div className="an-main-suite" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* ROW 1: PRIMARY CHARTS (Side-by-Side) */}
         <div className="chart-row">
+          <Card style={{ flex: 1, padding: '24px' }}>
+          </Card>
         </div>
       </div>
     </div>
