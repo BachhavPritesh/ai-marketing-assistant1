@@ -150,6 +150,9 @@ export default function Analytics() {
               </ResponsiveContainer>
             </div>
           </Card>
+
+          <Card style={{ flex: 1, padding: '24px' }}>
+          </Card>
         </div>
       </div>
     </div>
