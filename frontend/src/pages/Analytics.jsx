@@ -76,3 +76,5 @@ const platColor = {
   Twitter:   { bg:'#FEF8E2', text:'#8A7A5A' },
   X:         { bg:'#FEF8E2', text:'#8A7A5A' }
 };
+
+const vColor = (v) => v >= 85 ? '#7A9A6E' : v >= 75 ? '#C9A96E' : '#C05A38';
