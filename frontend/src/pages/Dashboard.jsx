@@ -6,13 +6,13 @@ import { MoreHorizontal, Zap, Users, Percent, FileText, TrendingUp, TrendingDown
 
 /* ─────────────── DATA ─────────────── */
 const engagementData = [
-  { day: 'Mon', tiktok: 8200, instagram: 4100, youtube: 2800, linkedin: 1200, twitter: 3100 },
-  { day: 'Tue', tiktok: 9800, instagram: 5100, youtube: 3200, linkedin: 1700, twitter: 2900 },
-  { day: 'Wed', tiktok: 7200, instagram: 3800, youtube: 4100, linkedin: 2200, twitter: 3400 },
-  { day: 'Thu', tiktok: 12000, instagram: 6200, youtube: 3800, linkedin: 1600, twitter: 4100 },
-  { day: 'Fri', tiktok: 15500, instagram: 7800, youtube: 5200, linkedin: 1300, twitter: 5200 },
-  { day: 'Sat', tiktok: 18500, instagram: 9100, youtube: 4600, linkedin: 900, twitter: 6100 },
-  { day: 'Sun', tiktok: 14800, instagram: 8300, youtube: 3900, linkedin: 800, twitter: 5800 },
+  { day: 'Mon', instagram: 4100, youtube: 2800, linkedin: 1200, twitter: 3100 },
+  { day: 'Tue', instagram: 5100, youtube: 3200, linkedin: 1700, twitter: 2900 },
+  { day: 'Wed', instagram: 3800, youtube: 4100, linkedin: 2200, twitter: 3400 },
+  { day: 'Thu', instagram: 6200, youtube: 3800, linkedin: 1600, twitter: 4100 },
+  { day: 'Fri', instagram: 7800, youtube: 5200, linkedin: 1300, twitter: 5200 },
+  { day: 'Sat', instagram: 9100, youtube: 4600, linkedin: 900, twitter: 6100 },
+  { day: 'Sun', instagram: 8300, youtube: 3900, linkedin: 800, twitter: 5800 },
 ];
 
 const engData = [
@@ -26,7 +26,7 @@ const engData = [
 ];
 
 const platformMetrics = [
-  { name: 'TikTok', value: '76.8K', trend: '+28%', up: true, color: '#7A9A6E' },
+  { name: 'Instagram', value: '54.2K', trend: '+14%', up: true, color: '#C05A38' },
   { name: 'Instagram', value: '54.2K', trend: '+14%', up: true, color: '#C05A38' },
   { name: 'Twitter', value: '30.6K', trend: '-2%', up: false, color: '#506B40' },
   { name: 'YouTube', value: '27.6K', trend: '+11%', up: true, color: '#A8442A' },
@@ -245,7 +245,7 @@ export default function Dashboard() {
                 <Tooltip cursor={{ fill: 'rgba(43,34,24,0.02)' }} contentStyle={{ borderRadius: 8, border: '1px solid #EAE4DC', background: '#FAF9F6', boxShadow: '0 4px 12px rgba(43,34,24,0.05)', fontFamily: 'Plus Jakarta Sans' }} />
                 <Bar dataKey="instagram" fill="#C05A38" radius={[4, 4, 0, 0]} barSize={8} />
                 <Bar dataKey="linkedin" fill="#C9A96E" radius={[4, 4, 0, 0]} barSize={8} />
-                <Bar dataKey="tiktok" fill="#7A9A6E" radius={[4, 4, 0, 0]} barSize={8} />
+                <Bar dataKey="linkedin" fill="#C9A96E" radius={[4, 4, 0, 0]} barSize={8} />
                 <Bar dataKey="twitter" fill="#506B40" radius={[4, 4, 0, 0]} barSize={8} />
                 <Bar dataKey="youtube" fill="#A8442A" radius={[4, 4, 0, 0]} barSize={8} />
               </BarChart>
@@ -256,7 +256,7 @@ export default function Dashboard() {
             {[
               { name: 'instagram', color: '#C05A38' },
               { name: 'linkedin', color: '#C9A96E' },
-              { name: 'tiktok', color: '#7A9A6E' },
+              { name: 'linkedin', color: '#C9A96E' },
               { name: 'twitter', color: '#506B40' },
               { name: 'youtube', color: '#A8442A' },
             ].map(plat => (
@@ -270,7 +270,7 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
             {[
               { label: 'Best Day', val: 'Sat' },
-              { label: 'Top Platform', val: 'TikTok' },
+              { label: 'Top Platform', val: 'Instagram' },
               { label: 'Avg Daily', val: '28.4K' },
             ].map(box => (
               <div key={box.label} style={{ background: '#F0EBE3', padding: '12px 0', borderRadius: 12, textAlign: 'center' }}>

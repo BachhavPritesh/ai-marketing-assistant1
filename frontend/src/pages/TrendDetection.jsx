@@ -13,11 +13,6 @@ const YtIcon = ({ size = 16 }) => (
     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8.11 1 12 1 12s0 3.89.46 5.58a2.78 2.78 0 0 0 1.94 2c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 15.89 23 12 23 12s0-3.89-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
   </svg>
 );
-const TkIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.81a8.18 8.18 0 0 0 4.79 1.53V6.9a4.85 4.85 0 0 1-1.02-.21z"/>
-  </svg>
-);
 const LiIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
@@ -53,7 +48,6 @@ const PLATFORMS = [
   { id: 'all', label: 'All', Icon: null },
   { id: 'instagram', label: 'Instagram', Icon: IgIcon },
   { id: 'youtube', label: 'YouTube', Icon: YtIcon },
-  { id: 'tiktok', label: 'TikTok', Icon: TkIcon },
   { id: 'linkedin', label: 'LinkedIn', Icon: LiIcon },
   { id: 'twitter', label: 'Twitter', Icon: TwIcon },
 ];
@@ -70,12 +64,6 @@ const TRENDS = [
     title:'Short-form Video Strategy', spike:'+156%', status:'rising', statusLabel:'rising',
     tags:['Entertainment'], volume:'890.0K', hashtags:['#YouTubeShorts','#VideoMarketing','#Reels'],
     shape:'up', color:'#C9A96E'
-  },
-  {
-    id: 3, icon: <TkIcon size={18}/>, platform:'tiktok', category:'Entertainment',
-    title:'#BedroomPop', spike:'+412%', status:'hot', statusLabel:'hot',
-    tags:['Entertainment'], volume:'5.6M', hashtags:['#IndieMusic','#TikTokMusic','#NewMusic'],
-    shape:'spike', color:'#7A9A6E'
   },
   {
     id: 4, icon: <LiIcon size={18}/>, platform:'linkedin', category:'Business',
@@ -100,12 +88,6 @@ const TRENDS = [
     title:'AI Tools Comparison 2025', spike:'+330%', status:'hot', statusLabel:'hot',
     tags:['Tech'], volume:'1.8M', hashtags:['#AITools','#ProductivityHacks','#Tech2025'],
     shape:'spike', color:'#C9A96E'
-  },
-  {
-    id: 8, icon: <TkIcon size={18}/>, platform:'tiktok', category:'Lifestyle',
-    title:'#CleanEating', spike:'+88%', status:'new', statusLabel:'new',
-    tags:['Lifestyle'], volume:'7.2M', hashtags:['#HealthyFood','#Nutrition','#WellnessJourney'],
-    shape:'up', color:'#7A9A6E'
   },
 ];
 

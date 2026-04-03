@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Sparkles, Copy, RefreshCw, Video, Hash, MessageSquareText, Image as ImageIcon, Send } from 'lucide-react';
 
-const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'LinkedIn', 'X'];
+const PLATFORMS = ['Instagram', 'YouTube', 'LinkedIn', 'Twitter'];
 const GOALS = ['Engagement', 'Conversion', 'Education', 'Viral Reach', 'Brand Awareness'];
 
 const Card = ({ children, style = {} }) => (
