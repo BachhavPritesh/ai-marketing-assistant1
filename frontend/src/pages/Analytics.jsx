@@ -128,6 +128,9 @@ export default function Analytics() {
           </Card>
         ))}
       </div>
+
+      <div className="an-main-suite" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      </div>
     </div>
   );
 }
