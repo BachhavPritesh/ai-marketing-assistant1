@@ -181,6 +181,15 @@ export default function Analytics() {
           <Card style={{ flex: '0 0 320px' }}>
             <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Platform Breakdown</h4>
             <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Reach distribution by network</p>
+            <div style={{ height: 180, position: 'relative' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={donut} innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value" stroke="none">
+                    {donut.map((entry, idx) => <Cell key={`cell-${idx}`} fill={entry.color} />)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </Card>
         </div>
       </div>
