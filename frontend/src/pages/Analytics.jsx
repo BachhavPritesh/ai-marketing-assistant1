@@ -98,175 +98,184 @@ export default function Analytics() {
   });
 
   return (
-    <div className="an-root" style={{ width: '100%', padding: '20px', backgroundColor: '#F8F5F0', minHeight: '100vh', boxSizing: 'border-box' }}>
+    <div className="an-root" style={{ width: '100%', padding: '32px', backgroundColor: '#F8F5F0', minHeight: '100vh', boxSizing: 'border-box' }}>
       <style>{`
-        .an-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .an-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
         .chart-row { display: flex; gap: 24px; flex-wrap: wrap; }
         .an-stats-row { display: flex; gap: 24px; flex-wrap: wrap; }
-        @media (max-width: 1200px) { .chart-row, .an-stats-row { flex-direction: column; } .an-stats-row > div { flex: 1 !important; } }
+        .chart-row > div, .an-stats-row > div { flex: 1; min-width: 320px; }
+        @media (max-width: 1200px) { .chart-row, .an-stats-row { flex-direction: column; } }
       `}</style>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: 32, fontWeight: 900, color: '#2B2218', margin: '0 0 6px', letterSpacing: '-0.8px' }}>Analytics</h1>
-          <p style={{ fontSize: 14, color: '#7A7068', margin: 0 }}>Your cross-platform performance at a glance.</p>
+          <h1 style={{ fontSize: 36, fontWeight: 900, color: '#2B2218', margin: '0 0 8px', letterSpacing: '-1px' }}>Analytics</h1>
+          <p style={{ fontSize: 15, color: '#7A7068', margin: 0 }}>Omni-channel performance insights and algorithmic health.</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 10 }}>
           {DATE_RANGES.map(d => <button key={d} style={pill(range === d)} onClick={() => setRange(d)}>{d}</button>)}
         </div>
       </div>
 
       {/* Platform tabs */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 22 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 32 }}>
         {PLAT_TABS.map(p => <button key={p} style={pill(platTab === p)} onClick={() => setPlatTab(p)}>{p}</button>)}
       </div>
 
       {/* KPI row */}
-      <div className="an-kpi" style={{ marginBottom: 24 }}>
+      <div className="an-kpi" style={{ marginBottom: 32 }}>
         {kpis.map(k => (
-          <Card key={k.label} style={{ padding: '18px 18px' }}>
-            <p style={{ fontSize: 10, fontWeight: 700, color: '#B0A89C', letterSpacing: '0.1em', margin: '0 0 8px' }}>{k.label.toUpperCase()}</p>
-            <p style={{ fontSize: 24, fontWeight: 900, color: '#2B2218', margin: '0 0 6px', letterSpacing: '-0.5px' }}>{k.value}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              {k.up ? <UpIcon size={12} color="#7A9A6E" /> : <DownIcon size={12} color="#C05A38" />}
-              <span style={{ fontSize: 12, fontWeight: 600, color: k.up ? '#7A9A6E' : '#C05A38' }}>{k.delta}</span>
+          <Card key={k.label} style={{ padding: '24px' }}>
+            <p style={{ fontSize: 11, fontWeight: 800, color: '#B0A89C', letterSpacing: '0.12em', margin: '0 0 12px' }}>{k.label.toUpperCase()}</p>
+            <p style={{ fontSize: 28, fontWeight: 900, color: '#2B2218', margin: '0 0 8px', letterSpacing: '-0.8px' }}>{k.value}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: '50%', background: k.up ? '#E6F0E6' : '#FEE8DC' }}>
+                {k.up ? <UpIcon size={12} color="#7A9A6E" /> : <DownIcon size={12} color="#C05A38" />}
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 700, color: k.up ? '#7A9A6E' : '#C05A38' }}>{k.delta}</span>
+              <span style={{ fontSize: 11, color: '#B0A89C', marginLeft: 2 }}>vs last period</span>
             </div>
           </Card>
         ))}
       </div>
 
-      <div className="an-main-suite" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* ROW 1: PRIMARY CHARTS (Side-by-Side) */}
+      <div className="an-main-suite" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        {/* ROW 1: PRIMARY CHARTS */}
         <div className="chart-row">
-          <Card style={{ flex: 1, minWidth: '400px', padding: '24px' }}>
-            <div style={{ marginBottom: 20 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Impressions Over Time</h3>
-              <p style={{ fontSize: 13, color: '#7A7068', margin: 0 }}>Views across all selected channels (Last 30 days)</p>
+          <Card style={{ padding: '32px' }}>
+            <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: '#2B2218', margin: '0 0 6px' }}>Impressions Over Time</h3>
+                <p style={{ fontSize: 14, color: '#7A7068', margin: 0 }}>Visualizing cross-platform reach velocity</p>
+              </div>
             </div>
-            <div style={{ height: 260 }}>
+            <div style={{ height: 320 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={lineData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EEE" />
-                  <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 11 }} dy={10} />
-                  <YAxis hide domain={[0, 'dataMax + 10000']} />
-                  <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', padding: '12px' }} />
-                  <Line type="monotone" dataKey="tiktok"    stroke="#7A9A6E" strokeWidth={4} dot={false} activeDot={{ r: 6, strokeWidth: 0 }} />
-                  <Line type="monotone" dataKey="instagram" stroke="#C05A38" strokeWidth={4} dot={false} activeDot={{ r: 6, strokeWidth: 0 }} />
+                <LineChart data={lineData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECE6DE" />
+                  <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 12, fontWeight: 600 }} dy={15} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 12 }} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: 16, border: '1px solid #EAE4DC', boxShadow: '0 10px 30px rgba(43,34,24,0.12)', padding: '16px' }}
+                    itemStyle={{ fontWeight: 700, fontSize: 13 }}
+                  />
+                  <Line type="monotone" dataKey="tiktok"    stroke="#7A9A6E" strokeWidth={5} dot={{ r: 0 }} activeDot={{ r: 8, stroke: '#fff', strokeWidth: 4 }} animationDuration={1500} />
+                  <Line type="monotone" dataKey="instagram" stroke="#C05A38" strokeWidth={5} dot={{ r: 0 }} activeDot={{ r: 8, stroke: '#fff', strokeWidth: 4 }} animationDuration={1800} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </Card>
 
-          <Card style={{ flex: 1, minWidth: '400px', padding: '24px' }}>
-            <div style={{ marginBottom: 20 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Follower Growth</h3>
-              <p style={{ fontSize: 13, color: '#7A7068', margin: 0 }}>Net new audience (Last 6 months)</p>
+          <Card style={{ padding: '32px' }}>
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#2B2218', margin: '0 0 6px' }}>Follower Growth</h3>
+              <p style={{ fontSize: 14, color: '#7A7068', margin: 0 }}>Cumulative audience acquisition trend</p>
             </div>
-            <div style={{ height: 260 }}>
+            <div style={{ height: 320 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={followerData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                <AreaChart data={followerData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="colorF" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#C9A96E" stopOpacity={0.3}/>
+                    <linearGradient id="colorFollow" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#C9A96E" stopOpacity={0.4}/>
                       <stop offset="95%" stopColor="#C9A96E" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EEE" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 11 }} dy={10} />
-                  <YAxis hide />
-                  <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', padding: '12px' }} />
-                  <Area type="monotone" dataKey="followers" stroke="#C9A96E" strokeWidth={4} fillOpacity={1} fill="url(#colorF)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECE6DE" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 12, fontWeight: 600 }} dy={15} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#B0A89C', fontSize: 12 }} />
+                  <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 10px 30px rgba(43,34,24,0.12)', padding: '16px' }} />
+                  <Area type="monotone" dataKey="followers" stroke="#C9A96E" strokeWidth={5} fillOpacity={1} fill="url(#colorFollow)" animationDuration={2000} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </Card>
         </div>
 
-        {/* ROW 2: TIERED INSIGHTS (Donut + Bars + List) */}
+        {/* ROW 2: TIERED INSIGHTS */}
         <div className="an-stats-row">
-          <Card style={{ flex: '0 0 320px' }}>
-            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Platform Breakdown</h4>
-            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Reach distribution by network</p>
-            <div style={{ height: 180, position: 'relative' }}>
+          <Card style={{ flex: '0 0 340px' }}>
+            <h4 style={{ fontSize: 17, fontWeight: 800, color: '#2B2218', margin: '0 0 6px' }}>Platform Breakdown</h4>
+            <p style={{ fontSize: 13, color: '#7A7068', margin: '0 0 24px' }}>Reach distribution by network</p>
+            <div style={{ height: 220, position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={donut} innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value" stroke="none">
+                  <Pie data={donut} innerRadius={65} outerRadius={90} paddingAngle={8} dataKey="value" stroke="none">
                     {donut.map((entry, idx) => <Cell key={`cell-${idx}`} fill={entry.color} />)}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: '#B0A89C' }}>TOTAL</p>
-                <p style={{ margin: 0, fontSize: 20, fontWeight: 900, color: '#2B2218' }}>100%</p>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: '#B0A89C', letterSpacing: '0.05em' }}>TOTAL</p>
+                <p style={{ margin: 0, fontSize: 24, fontWeight: 900, color: '#2B2218' }}>100%</p>
               </div>
             </div>
-            <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               {donut.map(d => (
-                <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color }}></div>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#4A4036' }}>{d.name}</span>
-                  <span style={{ fontSize: 12, color: '#7A7068', marginLeft: 'auto' }}>{d.value}%</span>
+                <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: d.color }}></div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#4A4036' }}>{d.name}</span>
+                  <span style={{ fontSize: 13, color: '#B0A89C', marginLeft: 'auto' }}>{d.value}%</span>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card style={{ flex: 1 }}>
-            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Top Performing Content</h4>
-            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Posts that outperformed the average index</p>
-            <div style={{ display: 'flex', borderBottom: '1px solid #EAE4DC', paddingBottom: 10, marginBottom: 12 }}>
-              <span style={{ flex: 3, fontSize: 11, fontWeight: 700, color: '#B0A89C' }}>CONTENT TITLE</span>
-              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'center' }}>VIEWS</span>
-              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'center' }}>ENG.</span>
-              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'right' }}>VIRALITY</span>
+          <Card style={{ flex: 1.5 }}>
+            <h4 style={{ fontSize: 17, fontWeight: 800, color: '#2B2218', margin: '0 0 6px' }}>Top Content Index</h4>
+            <p style={{ fontSize: 13, color: '#7A7068', margin: '0 0 24px' }}>Posts exceeding benchmark virality</p>
+            <div style={{ display: 'flex', borderBottom: '1px solid #ECE6DE', paddingBottom: 12, marginBottom: 16 }}>
+              <span style={{ flex: 3, fontSize: 12, fontWeight: 800, color: '#B0A89C', letterSpacing: '0.05em' }}>CONTENT</span>
+              <span style={{ flex: 1, fontSize: 12, fontWeight: 800, color: '#B0A89C', textAlign: 'center' }}>VIEWS</span>
+              <span style={{ flex: 1, fontSize: 12, fontWeight: 800, color: '#B0A89C', textAlign: 'center' }}>ENG.</span>
+              <span style={{ flex: 1, fontSize: 12, fontWeight: 800, color: '#B0A89C', textAlign: 'right' }}>V-SCORE</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {contentTable.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', padding: '14px 0', borderBottom: idx === contentTable.length - 1 ? 'none' : '1px solid #F4F0EB', alignItems: 'center' }}>
+                <div key={idx} style={{ display: 'flex', padding: '16px 0', borderBottom: idx === contentTable.length - 1 ? 'none' : '1px solid #F4F0EB', alignItems: 'center' }}>
                   <div style={{ flex: 3 }}>
-                    <p style={{ margin: '0 0 6px', fontSize: 13, fontWeight: 700, color: '#2B2218', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</p>
-                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 700, color: '#2B2218', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</p>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <span style={{ 
-                        fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 4,
+                        fontSize: 10, fontWeight: 900, padding: '3px 8px', borderRadius: 6,
                         background: platColor[item.platform]?.bg || '#EEE',
-                        color: platColor[item.platform]?.text || '#666'
+                        color: platColor[item.platform]?.text || '#666', letterSpacing: '0.02em'
                       }}>{item.platform.toUpperCase()}</span>
-                      <span style={{ fontSize: 11, color: '#B0A89C' }}>Posted {item.posted}</span>
+                      <span style={{ fontSize: 12, color: '#B0A89C' }}>{item.posted}</span>
                     </div>
                   </div>
-                  <span style={{ flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, color: '#4A4036' }}>{item.views}</span>
-                  <span style={{ flex: 1, textAlign: 'center', fontSize: 13, fontWeight: 700, color: '#7A9A6E' }}>{item.eng}%</span>
+                  <span style={{ flex: 1, textAlign: 'center', fontSize: 14, fontWeight: 800, color: '#4A4036' }}>{item.views}</span>
+                  <span style={{ flex: 1, textAlign: 'center', fontSize: 14, fontWeight: 800, color: '#7A9A6E' }}>{item.eng}%</span>
                   <div style={{ flex: 1, textAlign: 'right' }}>
-                    <span style={{ fontSize: 14, fontWeight: 900, color: vColor(item.v) }}>{item.v}%</span>
+                    <span style={{ fontSize: 15, fontWeight: 900, color: vColor(item.v) }}>{item.v}</span>
                   </div>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card style={{ flex: '0 0 320px' }}>
-            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>AI Insights</h4>
-            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Algorithmic health scores</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <Card style={{ flex: '0 0 340px' }}>
+            <h4 style={{ fontSize: 17, fontWeight: 800, color: '#2B2218', margin: '0 0 6px' }}>Algorithmic Signals</h4>
+            <p style={{ fontSize: 13, color: '#7A7068', margin: '0 0 24px' }}>AI-driven engagement health</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {algoMetrics.map((m, idx) => (
                 <div key={idx}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#4A4036' }}>{m.label}</span>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: vColor(m.score) }}>{m.score}%</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#4A4036' }}>{m.label}</span>
+                    <span style={{ fontSize: 13, fontWeight: 900, color: vColor(m.score) }}>{m.score}%</span>
                   </div>
-                  <div style={{ height: 6, background: '#F0EBE3', borderRadius: 3, overflow: 'hidden' }}>
-                    <div style={{ width: `${m.score}%`, height: '100%', background: vColor(m.score), borderRadius: 3 }}></div>
+                  <div style={{ height: 8, background: '#ECE6DE', borderRadius: 4, overflow: 'hidden' }}>
+                    <div style={{ width: `${m.score}%`, height: '100%', background: vColor(m.score), borderRadius: 4, transition: 'width 1s ease-out' }}></div>
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 26, padding: '16px', background: '#FEF8E2', borderRadius: 12, border: '1px solid #F9EBC8' }}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <GrowIcon size={16} color="#A87B00" />
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#A87B00' }}>Algorithm Forecast</span>
+            <div style={{ marginTop: 32, padding: '20px', background: '#FEF8E2', borderRadius: 16, border: '1px solid #F9EBC8', boxShadow: '0 4px 12px rgba(168,123,0,0.06)' }}>
+              <div style={{ display: 'flex', gap: 10, marginBottom: 10, alignItems: 'center' }}>
+                <GrowIcon size={18} color="#A87B00" />
+                <span style={{ fontSize: 14, fontWeight: 900, color: '#A87B00', letterSpacing: '0.02em' }}>SMART RECOMMENDATION</span>
               </div>
-              <p style={{ margin: 0, fontSize: 12, color: '#8A7A5A', lineHeight: 1.5 }}>Your high "Comment Rate" is triggering the TikTok FYP loop. Post a follow-up story to maintain momentum.</p>
+              <p style={{ margin: 0, fontSize: 13, color: '#8A7A5A', lineHeight: 1.6 }}>Your <b>Instagram</b> engagement rate is peaking at 18:00 UTC. Schedule your "AI Tools" carousel for tomorrow to maximize reach.</p>
             </div>
           </Card>
         </div>
