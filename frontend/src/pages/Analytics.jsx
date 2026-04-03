@@ -17,3 +17,11 @@ const GrowIcon = (p) => <SVGIcon {...p}><polyline points="23 6 13.5 15.5 8.5 10.
 
 const DATE_RANGES = ['7D', '30D', '90D', 'Custom'];
 const PLAT_TABS = ['All Platforms', 'Instagram', 'YouTube', 'LinkedIn', 'TikTok', 'X'];
+
+const kpis = [
+  { label: 'Total Reach',      value: '2.4M',    delta: '+12%',  up: true  },
+  { label: 'Engagement Rate',  value: '4.8%',    delta: '+0.6%', up: true  },
+  { label: 'Watch Time',       value: '18.2K hrs',delta: '+22%', up: true  },
+  { label: 'Shares',           value: '84.1K',   delta: '-3%',   up: false },
+  { label: 'Follower Growth',  value: '+12.4K',  delta: '+9%',   up: true  },
+];
