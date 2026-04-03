@@ -204,6 +204,11 @@ export default function Analytics() {
               ))}
             </div>
           </Card>
+
+          <Card style={{ flex: 1 }}>
+            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Top Performing Content</h4>
+            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Posts that outperformed the average index</p>
+          </Card>
         </div>
       </div>
     </div>
