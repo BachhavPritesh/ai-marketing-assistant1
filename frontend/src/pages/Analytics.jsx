@@ -51,3 +51,11 @@ const donut = [
   { name: 'LinkedIn',  value: 12, color: '#C9A96E' },
   { name: 'X',         value: 7,  color: '#3A3028' },
 ];
+
+const contentTable = [
+  { title: 'AI trick that changed my content game forever...', platform: 'Instagram', views: '124.0K', eng: '9.2', v: 88, posted: '2 days ago' },
+  { title: "The algorithm doesn't pick winners randomly 🧵", platform: 'Twitter',   views: '87.0K',  eng: '7.8', v: 82, posted: '4 days ago' },
+  { title: 'POV: You cracked the content code 💡',          platform: 'TikTok',    views: '248.0K', eng: '11.4', v: 91, posted: '1 week ago' },
+  { title: 'B2B Content Strategy That Actually Works',       platform: 'LinkedIn',  views: '34.0K',  eng: '6.1', v: 74, posted: '1 week ago' },
+  { title: 'AI Tools Comparison 2025 | Full Review',        platform: 'YouTube',   views: '89.0K',  eng: '8.3', v: 86, posted: '2 weeks ago' },
+];
