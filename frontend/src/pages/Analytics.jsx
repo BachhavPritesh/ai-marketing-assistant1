@@ -208,6 +208,18 @@ export default function Analytics() {
           <Card style={{ flex: 1 }}>
             <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>Top Performing Content</h4>
             <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Posts that outperformed the average index</p>
+            <div style={{ display: 'flex', borderBottom: '1px solid #EAE4DC', paddingBottom: 10, marginBottom: 12 }}>
+              <span style={{ flex: 3, fontSize: 11, fontWeight: 700, color: '#B0A89C' }}>CONTENT TITLE</span>
+              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'center' }}>VIEWS</span>
+              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'center' }}>ENG.</span>
+              <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#B0A89C', textAlign: 'right' }}>VIRALITY</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {contentTable.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', padding: '14px 0', borderBottom: idx === contentTable.length - 1 ? 'none' : '1px solid #F4F0EB', alignItems: 'center' }}>
+                </div>
+              ))}
+            </div>
           </Card>
         </div>
       </div>
