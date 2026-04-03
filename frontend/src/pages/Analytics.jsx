@@ -237,6 +237,31 @@ export default function Analytics() {
               ))}
             </div>
           </Card>
+
+          <Card style={{ flex: '0 0 320px' }}>
+            <h4 style={{ fontSize: 15, fontWeight: 800, color: '#2B2218', margin: '0 0 4px' }}>AI Insights</h4>
+            <p style={{ fontSize: 12, color: '#7A7068', margin: '0 0 20px' }}>Algorithmic health scores</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {algoMetrics.map((m, idx) => (
+                <div key={idx}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#4A4036' }}>{m.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: vColor(m.score) }}>{m.score}%</span>
+                  </div>
+                  <div style={{ height: 6, background: '#F0EBE3', borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{ width: `${m.score}%`, height: '100%', background: vColor(m.score), borderRadius: 3 }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 26, padding: '16px', background: '#FEF8E2', borderRadius: 12, border: '1px solid #F9EBC8' }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <GrowIcon size={16} color="#A87B00" />
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#A87B00' }}>Algorithm Forecast</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 12, color: '#8A7A5A', lineHeight: 1.5 }}>Your high "Comment Rate" is triggering the TikTok FYP loop. Post a follow-up story to maintain momentum.</p>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
