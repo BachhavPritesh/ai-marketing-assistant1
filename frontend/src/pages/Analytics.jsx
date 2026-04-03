@@ -86,3 +86,9 @@ const Card = ({ children, style = {} }) => (
     boxSizing: 'border-box', ...style,
   }}>{children}</div>
 );
+
+export default function Analytics() {
+  const [range, setRange]   = useState('30D');
+  const [platTab, setPlatTab] = useState('All Platforms');
+  return null;
+}
