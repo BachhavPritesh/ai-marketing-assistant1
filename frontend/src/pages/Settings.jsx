@@ -319,8 +319,14 @@ const ConnectedAccounts = ({ userData }) => {
   const handleDisconnect = async (platform) => {
     setConnectingPlatform(platform);
     try {
-      await api.disconnectPlatform(platform);
-      await fetchConnectedPlatforms();
+      const result = await api.disconnectPlatform(platform);
+      if (result.success) {
+        // Immediately update local state
+        setConnectedPlatforms(prev => ({
+          ...prev,
+          [platform]: { connected: false }
+        }));
+      }
     } catch (error) {
       console.error('Error disconnecting:', error);
     } finally {
@@ -335,8 +341,17 @@ const ConnectedAccounts = ({ userData }) => {
     try {
       const result = await api.connectPlatform(modalPlatform.id, handle);
       if (result.success) {
+        // Immediately update local state with the new handle
+        setConnectedPlatforms(prev => ({
+          ...prev,
+          [modalPlatform.id]: {
+            connected: true,
+            handle: handle || `@${modalPlatform.id}_user`,
+            connectedAt: new Date(),
+            lastSync: new Date()
+          }
+        }));
         setShowModal(false);
-        await fetchConnectedPlatforms();
       }
     } catch (error) {
       console.error('Error connecting:', error);
@@ -370,7 +385,9 @@ const ConnectedAccounts = ({ userData }) => {
         const platformData = connectedPlatforms[s.id] || {};
         const isConnected = platformData.connected;
         const isConnecting = connectingPlatform === s.id;
-        const platformHandle = platformData.handle || s.handle;
+        const platformHandle = platformData.handle 
+          ? (platformData.handle.startsWith('@') ? platformData.handle : `@${platformData.handle}`)
+          : s.handle;
 
         return (
           <div key={s.id} style={{
