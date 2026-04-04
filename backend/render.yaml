@@ -16,8 +16,18 @@ services:
         sync: false
       - key: GEMINI_API_KEY
         sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://ai-marketing-assistant-osx0.onrender.com/api/auth/google/callback
+      - key: FRONTEND_URL
+        value: https://viral-craft-forntend.vercel.app
+      - key: BACKEND_URL
+        value: https://ai-marketing-assistant-osx0.onrender.com
       - key: ML_SERVICE_URL
-        value: http://localhost:5001
+        value: https://viralpulse-ml.onrender.com
 
   - type: web
     name: viralpulse-ml
