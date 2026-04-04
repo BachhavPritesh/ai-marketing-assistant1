@@ -5,7 +5,9 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, select: false },
+  profileImage: { type: String, default: '' },
   role: { type: String, default: 'Creator' },
+  authProvider: { type: String, default: 'local' },
   connectedPlatforms: {
     youtube: { connected: Boolean, channelId: String },
     twitter: { connected: Boolean, userId: String },

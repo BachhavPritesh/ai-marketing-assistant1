@@ -74,7 +74,7 @@ exports.googleCallback = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Unable to verify Google account' });
     }
 
-    const { email, name } = payload;
+    const { email, name, picture } = payload;
     let user = await User.findOne({ email });
     if (!user) {
       const randomPassword = crypto.randomBytes(16).toString('hex');
@@ -82,12 +82,28 @@ exports.googleCallback = async (req, res) => {
         name: name || email.split('@')[0],
         email,
         password: randomPassword,
-        role: 'Creator'
+        role: 'Creator',
+        profileImage: picture || '',
+        authProvider: 'google'
       });
+    } else {
+      if (picture && user.profileImage !== picture) {
+        user.profileImage = picture;
+        user.authProvider = 'google';
+        await user.save();
+      }
     }
 
     const token = generateToken(user._id);
-    const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?token=${encodeURIComponent(token)}`;
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage || '',
+      token
+    };
+    const redirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`;
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('Google callback error:', error);
