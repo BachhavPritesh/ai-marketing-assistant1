@@ -4,6 +4,7 @@ import {
   ResponsiveContainer, BarChart, Bar, Cell
 } from 'recharts';
 import { MoreHorizontal, Zap, Users, Percent, FileText, TrendingUp, TrendingDown, BarChart2, Target, Lightbulb } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getUserInitials } from '../utils/userDataGenerator';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -98,9 +99,18 @@ export default function Dashboard() {
 
   const { greeting: userGreeting, status, topStats, engagementData, totalEngagement, platformMetrics, viralityPrediction, insights, performers, aiRecs, hookTip } = userData;
 
-  return (
-    <div className="dash-root">
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const itemAnim = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
 
+  return (
+    <motion.div className="dash-root" variants={container} initial="hidden" animate="show">
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'url(/ambient_marketing_bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.04, zIndex: 0, pointerEvents: 'none' }} />
       {/* ── HERO ── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
         <div>
@@ -133,17 +143,19 @@ export default function Dashboard() {
       </div>
 
       {/* ── HORIZONTAL STATS ── */}
-      <div className="top-stats" style={{ marginBottom: 16 }}>
+      <motion.div className="top-stats" style={{ marginBottom: 16 }} variants={itemAnim}>
         {topStats.map((st, i) => {
           const IconComponent = IconMap[st.Icon];
           return (
-            <div key={i} style={{
+            <motion.div key={i} style={{
               ...S.card,
               padding: '20px 24px',
               position: 'relative',
               overflow: 'hidden',
               display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            }}>
+            }}
+            whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(43,34,24,0.06)' }}
+            transition={{ duration: 0.2 }}>
               <div style={{
                 position: 'absolute', top: 0, right: 0, width: '120px', height: '120px',
                 background: `radial-gradient(circle at top right, ${st.bgGlow}, transparent 70%)`,
@@ -176,16 +188,16 @@ export default function Dashboard() {
                 <div style={{ fontSize: 13, color: '#7A7068', fontWeight: 600 }}>{st.title}</div>
                 <div style={{ fontSize: 11, color: '#B0A89C', fontWeight: 500, marginTop: 4 }}>{st.sub}</div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* ══ ROW 1 ══ */}
-      <div className="dash-grid" style={{ marginBottom: 16 }}>
+      <motion.div className="dash-grid" style={{ marginBottom: 16 }} variants={itemAnim}>
 
         {/* ① Content Analytics -> 7-Day Engagement */}
-        <div style={{ ...S.card, gridColumn: 'span 3' }}>
+        <motion.div style={{ ...S.card, gridColumn: 'span 3' }} whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(43,34,24,0.04)' }} transition={{ duration: 0.2 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ background: '#F3E5DF', padding: 8, borderRadius: 10, display: 'flex' }}>
@@ -240,14 +252,14 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
 
       {/* ══ ROW 2 ══ */}
-      <div className="dash-grid" style={{ marginBottom: 16 }}>
+      <motion.div className="dash-grid" style={{ marginBottom: 16 }} variants={itemAnim}>
         {/* ③ Virality Prediction */}
-        <div style={{ ...S.card, gridColumn: 'span 2' }}>
+        <motion.div style={{ ...S.card, gridColumn: 'span 2' }} whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(43,34,24,0.04)' }} transition={{ duration: 0.2 }}>
           <div style={S.hdr}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ background: '#E8E0D4', padding: 6, borderRadius: '50%' }}>
@@ -311,10 +323,10 @@ export default function Dashboard() {
               <span style={{ fontWeight: 700, color: '#2B2218' }}>{hookTip}</span>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* ④ Top Performers */}
-        <div style={S.card}>
+        <motion.div style={S.card} whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(43,34,24,0.04)' }} transition={{ duration: 0.2 }}>
           <div style={S.hdr}>
             <h2 style={S.cardTitle}>Top Performers</h2>
           </div>
@@ -344,8 +356,8 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Responsive */}
       <style>{`
@@ -377,6 +389,6 @@ export default function Dashboard() {
           h1 { fontSize: 28px !important; }
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

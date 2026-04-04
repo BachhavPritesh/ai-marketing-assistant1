@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Zap, ExternalLink, MoreHorizontal } from 'lucide-react';
+import { motion } from 'framer-motion';
 import api from '../services/api';
 
 /* ── Heatmap data ── */
@@ -42,11 +43,14 @@ const priorityStyle = {
 };
 
 const Card = ({ children, style = {} }) => (
-  <div style={{
+  <motion.div 
+    whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(43,34,24,0.05)' }} 
+    transition={{ duration: 0.2 }}
+    style={{
     background: '#FAF9F6', borderRadius: 16, border: '1px solid #EAE4DC',
     boxShadow: '0 1px 8px rgba(43,34,24,0.05)', padding: '22px',
     boxSizing: 'border-box', ...style,
-  }}>{children}</div>
+  }}>{children}</motion.div>
 );
 
 export default function Strategy() {
@@ -112,8 +116,18 @@ export default function Strategy() {
     border: 'none', fontSize: 13, fontWeight: active ? 600 : 400, transition: 'all 150ms',
   });
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const itemAnim = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="st-root">
+    <motion.div className="st-root" variants={container} initial="hidden" animate="show">
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'url(/ambient_marketing_bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.04, zIndex: 0, pointerEvents: 'none' }} />
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 28 }}>
         <div>
@@ -137,7 +151,7 @@ export default function Strategy() {
       </div>
 
       {/* ── ROW 1: Heatmap + Weekly Plan ── */}
-      <div className="st-r1" style={{ marginBottom: 18 }}>
+      <motion.div className="st-r1" style={{ marginBottom: 18 }} variants={itemAnim}>
         <Card>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
             <h2 style={{ fontSize: 15, fontWeight: 700, color: '#2B2218', margin: 0 }}>Best Posting Windows</h2>
@@ -222,10 +236,10 @@ export default function Strategy() {
             <Zap size={14}/> {isGenerating ? 'Analyzing...' : 'Execute Growth Plan'}
           </button>
         </Card>
-      </div>
+      </motion.div>
 
       {/* ── ROW 2: Formats + Calendar + Distribution ── */}
-      <div className="st-r2">
+      <motion.div className="st-r2" variants={itemAnim}>
         <Card>
           <h2 style={{ fontSize: 15, fontWeight: 700, color: '#2B2218', margin: '0 0 18px' }}>Format Recommendations</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -301,7 +315,7 @@ export default function Strategy() {
             ))}
           </div>
         </Card>
-      </div>
+      </motion.div>
 
       <style>{`
         .st-root { padding: 32px 36px 48px; position: relative; z-index: 1; box-sizing: border-box; }
@@ -321,6 +335,6 @@ export default function Strategy() {
           to { transform: rotate(360deg); }
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

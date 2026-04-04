@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import api from '../services/api';
+import image from "../assets/login_and_signUp_page BG.png";
 
 /* ── Botanical corner decorations (match reference screenshot) ── */
 const BotanicalTL = () => (
@@ -57,7 +58,7 @@ export default function Login() {
   const [name, setName] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = 'http://localhost:5000/api';
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -132,7 +133,15 @@ export default function Login() {
   const isSignup = tab === 'signup';
 
   return (
-    <div style={{ minHeight: '100vh', background: '#EDE8DF', display: 'flex', flexDirection: 'column', fontFamily: "'Plus Jakarta Sans', sans-serif", position: 'relative', overflow: 'hidden' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: `url(${image}) center/cover  no-repeat, #EDE8DF`,
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
 
       {/* Botanical decorations */}
       <BotanicalTL />
@@ -144,13 +153,21 @@ export default function Login() {
           ViralPulse AI
         </Link>
         <div style={{ display: 'flex', gap: 36 }}>
-          {['Features', 'Pricing', 'Community'].map(item => (
-            <a key={item} href="#" style={{ fontSize: 14, color: '#2B2218', textDecoration: 'none', fontWeight: 400 }}
-              onMouseEnter={e => e.target.style.color = '#C05A38'}
-              onMouseLeave={e => e.target.style.color = '#2B2218'}>
-              {item}
-            </a>
-          ))}
+          <Link to="/features" style={{ fontSize: 14, color: '#2B2218', textDecoration: 'none', fontWeight: 400 }}
+            onMouseEnter={e => e.target.style.color = '#C05A38'}
+            onMouseLeave={e => e.target.style.color = '#2B2218'}>
+            Features
+          </Link>
+          <Link to="/pricing" style={{ fontSize: 14, color: '#2B2218', textDecoration: 'none', fontWeight: 400 }}
+            onMouseEnter={e => e.target.style.color = '#C05A38'}
+            onMouseLeave={e => e.target.style.color = '#2B2218'}>
+            Pricing
+          </Link>
+          <Link to="/community" style={{ fontSize: 14, color: '#2B2218', textDecoration: 'none', fontWeight: 400 }}
+            onMouseEnter={e => e.target.style.color = '#C05A38'}
+            onMouseLeave={e => e.target.style.color = '#2B2218'}>
+            Community
+          </Link>
         </div>
         <button
           onClick={() => { setTab(tab === 'signin' ? 'signup' : 'signin'); setStep('form'); }}
@@ -215,6 +232,21 @@ export default function Login() {
                   onMouseLeave={e => e.currentTarget.style.background = '#FAFAFA'}>
                   <GoogleIcon />
                   SIGN IN WITH GOOGLE
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = `${API_BASE_URL}/auth/apple`}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+                    padding: '13px 20px', borderRadius: 10,
+                    border: '1px solid #DDD6CA', background: '#FAFAFA',
+                    fontSize: 13, fontWeight: 600, color: '#2B2218', letterSpacing: '0.04em',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'background 150ms',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#F0EBE3'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#FAFAFA'}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><path fill="#000" d="M17.05 20.28c-.98.95-2.05.8-3.08.35c-1.09-.46-2.09-.48-3.24 0c-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8c1.18-.24 2.31-.93 3.57-.84c1.51.12 2.65.72 3.4 1.8c-3.12 1.87-2.38 5.98.48 7.13c-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25c.29 2.58-2.34 4.5-3.74 4.25"/></svg>
+                  SIGN IN WITH APPLE
                 </button>
               </div>
 
