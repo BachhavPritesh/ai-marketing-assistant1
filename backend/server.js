@@ -25,7 +25,7 @@ app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/strategy', require('./routes/strategyRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
-// Dummy endpoints for Instagram, LinkedIn, TikTok (mock data for frontend)
+// Dummy endpoints for Instagram, LinkedIn, TikTok, Facebook (mock data for frontend)
 app.get('/api/instagram/trending', (req, res) => {
   res.json({ success: true, data: Array(10).fill().map((_, i) => ({ id: i, title: `Instagram Post ${i}`, likes: Math.floor(Math.random() * 10000), comments: Math.floor(Math.random() * 1000) })) });
 });
@@ -34,6 +34,9 @@ app.get('/api/linkedin/trending', (req, res) => {
 });
 app.get('/api/tiktok/trending', (req, res) => {
   res.json({ success: true, data: Array(10).fill().map((_, i) => ({ id: i, title: `TikTok Video ${i}`, views: Math.floor(Math.random() * 100000) })) });
+});
+app.get('/api/facebook/trending', (req, res) => {
+  res.json({ success: true, data: Array(10).fill().map((_, i) => ({ id: i, title: `Facebook Post ${i}`, shares: Math.floor(Math.random() * 5000), reactions: Math.floor(Math.random() * 20000) })) });
 });
 
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));

@@ -12,7 +12,9 @@ const UserSchema = new mongoose.Schema({
     youtube: { connected: Boolean, channelId: String },
     twitter: { connected: Boolean, userId: String },
     instagram: { connected: Boolean, username: String },
-    linkedin: { connected: Boolean, username: String }
+    linkedin: { connected: Boolean, username: String },
+    facebook: { connected: Boolean, username: String },
+    tiktok: { connected: Boolean, username: String }
   },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });

@@ -82,6 +82,11 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/tiktok/trending`, { headers: authHeaders() });
     return res.json();
   },
+  // Facebook (mock)
+  getFacebookTrending: async () => {
+    const res = await fetch(`${API_BASE_URL}/facebook/trending`, { headers: authHeaders() });
+    return res.json();
+  },
   // Analytics
   getAnalyticsOverview: async () => {
     const res = await fetch(`${API_BASE_URL}/analytics/overview`, { headers: authHeaders() });

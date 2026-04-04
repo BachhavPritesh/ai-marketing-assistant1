@@ -126,6 +126,69 @@ exports.googleCallback = async (req, res) => {
   }
 };
 
+exports.appleAuth = async (req, res) => {
+  const clientId = process.env.APPLE_CLIENT_ID;
+  const redirectUri = `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/apple/callback`;
+  const state = crypto.randomBytes(16).toString('hex');
+  
+  const authUrl = `https://appleid.apple.com/auth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code id_token&response_mode=form_post&scope=name email&state=${state}`;
+  res.redirect(authUrl);
+};
+
+exports.appleCallback = async (req, res) => {
+  try {
+    const { code, id_token, user: appleUserData } = req.body;
+    
+    let email = null;
+    let name = null;
+    
+    if (id_token) {
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.decode(id_token);
+      if (decoded) {
+        email = decoded.email;
+        if (decoded.fullName && decoded.fullName.givenName) {
+          name = `${decoded.fullName.givenName} ${decoded.fullName.familyName || ''}`.trim();
+        }
+      }
+    }
+    
+    if (!email) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=apple_auth_failed`);
+    }
+    
+    let user = await User.findOne({ email });
+    if (!user) {
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      user = await User.create({
+        name: name || email.split('@')[0],
+        email,
+        password: randomPassword,
+        role: 'Creator',
+        authProvider: 'apple'
+      });
+    } else {
+      user.authProvider = 'apple';
+      await user.save();
+    }
+
+    const token = generateToken(user._id);
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage || '',
+      connectedPlatforms: user.connectedPlatforms || {},
+      token
+    };
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`);
+  } catch (error) {
+    console.error('Apple callback error:', error);
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=apple_auth_failed`);
+  }
+};
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -155,7 +218,7 @@ exports.getConnectedPlatforms = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
     
-    const platforms = ['instagram', 'youtube', 'linkedin', 'twitter'];
+    const platforms = ['instagram', 'youtube', 'linkedin', 'twitter', 'facebook', 'tiktok'];
     const connectedPlatforms = {};
     
     platforms.forEach(platform => {
@@ -181,7 +244,7 @@ exports.connectPlatform = async (req, res) => {
   try {
     const { platform, handle, accessToken } = req.body;
     
-    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter'].includes(platform)) {
+    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter', 'facebook', 'tiktok'].includes(platform)) {
       return res.status(400).json({ success: false, message: 'Invalid platform' });
     }
     
@@ -221,7 +284,7 @@ exports.disconnectPlatform = async (req, res) => {
   try {
     const { platform } = req.body;
     
-    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter'].includes(platform)) {
+    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter', 'facebook', 'tiktok'].includes(platform)) {
       return res.status(400).json({ success: false, message: 'Invalid platform' });
     }
     
