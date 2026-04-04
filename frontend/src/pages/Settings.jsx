@@ -311,6 +311,7 @@ const ConnectedAccounts = ({ userData }) => {
 
   const handleConnect = (platform) => {
     const social = SOCIALS.find(s => s.id === platform);
+    console.log('Opening modal for platform:', platform, social);
     setModalPlatform(social);
     setShowModal(true);
     setHandle('');
@@ -339,22 +340,31 @@ const ConnectedAccounts = ({ userData }) => {
     setConnectingPlatform(modalPlatform.id);
     
     try {
+      console.log('Connecting to:', modalPlatform.id, 'with handle:', handle);
       const result = await api.connectPlatform(modalPlatform.id, handle);
+      console.log('Result:', result);
+      
       if (result.success) {
         // Immediately update local state with the new handle
+        const newHandle = handle || `@${modalPlatform.id}_user`;
         setConnectedPlatforms(prev => ({
           ...prev,
           [modalPlatform.id]: {
             connected: true,
-            handle: handle || `@${modalPlatform.id}_user`,
-            connectedAt: new Date(),
-            lastSync: new Date()
+            handle: newHandle,
+            connectedAt: new Date().toISOString(),
+            lastSync: new Date().toISOString()
           }
         }));
         setShowModal(false);
+        console.log('Platform connected successfully!');
+      } else {
+        console.error('Connection failed:', result.message);
+        alert('Connection failed: ' + (result.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error connecting:', error);
+      alert('Error connecting to platform');
     } finally {
       setConnectingPlatform(null);
     }
@@ -378,6 +388,8 @@ const ConnectedAccounts = ({ userData }) => {
       </div>
     );
   }
+
+  console.log('Rendering with connectedPlatforms:', connectedPlatforms);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
