@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: viralpulse-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ML_SERVICE_URL
+        value: http://localhost:5001
+
+  - type: web
+    name: viralpulse-ml
+    runtime: python
+    rootDir: ml
+    buildCommand: pip install -r requirements.txt
+    startCommand: python inference/service.py
+    envVars:
+      - key: PORT
+        value: 5001
+
+  - type: web
+    name: viralpulse-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
