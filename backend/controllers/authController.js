@@ -110,3 +110,120 @@ exports.googleCallback = async (req, res) => {
     res.status(500).json({ success: false, message: 'Google callback failed' });
   }
 };
+
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage || '',
+        connectedPlatforms: user.connectedPlatforms || {}
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getConnectedPlatforms = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    const platforms = ['instagram', 'youtube', 'linkedin', 'twitter'];
+    const connectedPlatforms = {};
+    
+    platforms.forEach(platform => {
+      if (user.connectedPlatforms && user.connectedPlatforms[platform]) {
+        connectedPlatforms[platform] = {
+          connected: true,
+          ...user.connectedPlatforms[platform],
+          connectedAt: user.connectedPlatforms[platform].connectedAt || new Date(),
+          lastSync: user.connectedPlatforms[platform].lastSync || null
+        };
+      } else {
+        connectedPlatforms[platform] = { connected: false };
+      }
+    });
+    
+    res.json({ success: true, data: connectedPlatforms });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.connectPlatform = async (req, res) => {
+  try {
+    const { platform, handle, accessToken } = req.body;
+    
+    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter'].includes(platform)) {
+      return res.status(400).json({ success: false, message: 'Invalid platform' });
+    }
+    
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Initialize connectedPlatforms if not exists
+    if (!user.connectedPlatforms) {
+      user.connectedPlatforms = {};
+    }
+    
+    // Simulate connection (in real app, would validate with actual API)
+    user.connectedPlatforms[platform] = {
+      connected: true,
+      handle: handle || `@${user.name.toLowerCase().replace(/\s+/g, '_')}`,
+      accessToken: accessToken || `mock_token_${Date.now()}`,
+      connectedAt: new Date(),
+      lastSync: new Date()
+    };
+    
+    await user.save();
+    
+    res.json({
+      success: true,
+      message: `${platform.charAt(0).toUpperCase() + platform.slice(1)} connected successfully`,
+      data: user.connectedPlatforms
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.disconnectPlatform = async (req, res) => {
+  try {
+    const { platform } = req.body;
+    
+    if (!platform || !['instagram', 'youtube', 'linkedin', 'twitter'].includes(platform)) {
+      return res.status(400).json({ success: false, message: 'Invalid platform' });
+    }
+    
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    if (user.connectedPlatforms && user.connectedPlatforms[platform]) {
+      user.connectedPlatforms[platform] = { connected: false };
+      await user.save();
+    }
+    
+    res.json({
+      success: true,
+      message: `${platform.charAt(0).toUpperCase() + platform.slice(1)} disconnected successfully`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

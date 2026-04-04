@@ -28,6 +28,35 @@ export const api = {
     return res.json();
   },
 
+  // User & Profile
+  getMe: async () => {
+    const res = await fetch(`${API_BASE_URL}/auth/me`, { headers: authHeaders() });
+    return res.json();
+  },
+
+  getConnectedPlatforms: async () => {
+    const res = await fetch(`${API_BASE_URL}/auth/connected-platforms`, { headers: authHeaders() });
+    return res.json();
+  },
+
+  connectPlatform: async (platform, handle, accessToken) => {
+    const res = await fetch(`${API_BASE_URL}/auth/connect-platform`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ platform, handle, accessToken })
+    });
+    return res.json();
+  },
+
+  disconnectPlatform: async (platform) => {
+    const res = await fetch(`${API_BASE_URL}/auth/disconnect-platform`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ platform })
+    });
+    return res.json();
+  },
+
   // YouTube
   getYouTubeTrending: async () => {
     const res = await fetch(`${API_BASE_URL}/youtube/trending`, { headers: authHeaders() });
