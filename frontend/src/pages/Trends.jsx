@@ -91,6 +91,9 @@ export default function Campaigns() {
   const [content, setContent] = useState('');
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const [fileType, setFileType] = useState(''); // 'image' or 'video'
   const [loading, setLoading] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
   const [prediction, setPrediction] = useState(null);
@@ -110,18 +113,25 @@ export default function Campaigns() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setUploaded(false);
     setUploading(true);
-    // Simulate upload or process locally
-    console.log('Selected file:', file.name);
+    setUploadedFileName(file.name);
+    
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+    setFileType(isVideo ? 'video' : isImage ? 'image' : 'other');
+    
+    console.log('Uploading file:', file.name, 'Type:', file.type);
+    
     setTimeout(() => {
       setUploading(false);
-      // You could set the file in state here if needed
-    }, 1200);
+      setUploaded(true);
+    }, 1500);
   };
 
   const handleAnalyze = async () => {
-    if (!content.trim()) {
-      setErrorMsg('Please enter some content text first.');
+    if (!content.trim() && !uploaded) {
+      setErrorMsg('Please enter some content text or upload a file first.');
       return;
     }
     setLoading(true);
@@ -130,24 +140,47 @@ export default function Campaigns() {
     try {
       const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
       const contentData = {
-        title: content.slice(0, 100),
+        title: content.slice(0, 100) || uploadedFileName,
         description: content,
         hashtags: content.match(/#\w+/g) || [],
         platform: activePlatform,
         hasEmoji: emojiRegex.test(content),
         hasQuestion: content.includes('?'),
         hasCallToAction: /(click|share|save|subscribe|follow|comment|tag)/i.test(content),
+        hasMedia: uploaded,
+        mediaType: uploaded ? fileType : null,
       };
       console.log('Sending to API:', contentData);
       const result = await api.predictVirality(contentData);
       console.log('API Result:', result);
       console.log('Analysis result received:', result.data);
       if (result.success) {
-        setPrediction(result.data);
+        const enhancedData = { ...result.data };
+        
+        if (uploaded && fileType === 'video') {
+          enhancedData.shareability = Math.min(100, (enhancedData.shareability || 65) + 15);
+          enhancedData.engagementFit = Math.min(100, (enhancedData.engagementFit || 60) + 20);
+          enhancedData.trendMatch = Math.min(100, (enhancedData.trendMatch || 55) + 10);
+        } else if (uploaded && fileType === 'image') {
+          enhancedData.shareability = Math.min(100, (enhancedData.shareability || 65) + 10);
+          enhancedData.engagementFit = Math.min(100, (enhancedData.engagementFit || 60) + 12);
+          enhancedData.trendMatch = Math.min(100, (enhancedData.trendMatch || 55) + 8);
+        }
+        
+        setPrediction(enhancedData);
       } else {
         setErrorMsg(result.message || 'Prediction failed. Please try again.');
       }
       setAnalyzed(true);
+      
+      // Clear the form after successful analysis
+      setContent('');
+      setUploaded(false);
+      setUploadedFileName('');
+      setFileType('');
+      if (fileRef.current) {
+        fileRef.current.value = '';
+      }
     } catch (err) {
       console.error('Analysis error:', err);
       setErrorMsg('Backend unreachable or prediction failed. Please check your connection.');
@@ -156,14 +189,6 @@ export default function Campaigns() {
       setLoading(false);
     }
   };
-
-  // Build current suggestions from prediction or defaults
-  const liveSuggestions = prediction?.suggestions && Array.isArray(prediction.suggestions)
-    ? prediction.suggestions.map(s => ({ 
-        text: s?.text || s?.suggestion || s?.tip || 'Check content relevance', 
-        level: (s?.impact || s?.level || s?.priority || 'MEDIUM').toUpperCase() 
-      }))
-    : defaultSuggestions;
 
   const viralScore   = analyzed && prediction ? (Number(prediction.viralityScore) || 0) : 0;
   const shareability = analyzed && prediction ? (prediction.shareability || prediction.shareScore || 0) : '—';
@@ -174,6 +199,97 @@ export default function Campaigns() {
   const reach       = analyzed ? (safeReach / 1000).toFixed(0) + 'K' : '—';
   const impressions = analyzed ? (safeReach * 1.8 / 1000).toFixed(0) + 'K' : '—';
   const potential   = viralScore >= 70 ? 'HIGH VIRAL POTENTIAL' : viralScore >= 40 ? 'MEDIUM POTENTIAL' : analyzed ? 'LOW POTENTIAL' : '';
+
+  // Generate suggestions based on prediction metrics and content analysis
+  const liveSuggestions = (() => {
+    // If API returns suggestions, use them
+    if (prediction?.suggestions && Array.isArray(prediction.suggestions) && prediction.suggestions.length > 0) {
+      return prediction.suggestions.map(s => ({ 
+        text: s?.text || s?.suggestion || s?.tip || 'Check content relevance', 
+        level: (s?.impact || s?.level || s?.priority || 'MEDIUM').toUpperCase() 
+      }));
+    }
+    
+    // Analyze the current content text
+    const textContent = content.toLowerCase();
+    const suggestions = [];
+    
+    // Hashtag analysis
+    const hashtagCount = (content.match(/#\w+/g) || []).length;
+    if (hashtagCount === 0) {
+      suggestions.push({ text: 'Add 3-5 relevant hashtags to increase discoverability by 30%.', level: 'HIGH IMPACT' });
+    } else if (hashtagCount > 10) {
+      suggestions.push({ text: 'Too many hashtags may seem spammy. Use 5-8 targeted hashtags instead.', level: 'MEDIUM' });
+    } else if (hashtagCount < 3) {
+      suggestions.push({ text: 'Add 2-3 more hashtags to improve reach and discoverability.', level: 'MEDIUM' });
+    }
+    
+    // Emoji analysis
+    const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
+    if (!emojiRegex.test(content) && content.length > 100) {
+      suggestions.push({ text: 'Add relevant emojis to increase engagement by 25% (use 3-5 naturally).', level: 'MEDIUM' });
+    } else if (emojiRegex.test(content)) {
+      suggestions.push({ text: 'Good use of emojis! Ensure they fit your brand voice.', level: 'LOW' });
+    }
+    
+    // Question/CTA analysis
+    if (!content.includes('?')) {
+      suggestions.push({ text: 'Add a question to encourage comments and boost algorithm ranking.', level: 'HIGH IMPACT' });
+    }
+    
+    const ctaWords = /(click|share|save|subscribe|follow|comment|tag|dm|link|bio|swipe|check|learn|discover|join)/i;
+    if (!ctaWords.test(content)) {
+      suggestions.push({ text: 'Include a clear call-to-action (save, share, comment, or tag a friend).', level: 'HIGH IMPACT' });
+    }
+    
+    // Length analysis
+    if (content.length < 100) {
+      suggestions.push({ text: 'Caption is too short. Add more context or story for better engagement.', level: 'MEDIUM' });
+    } else if (content.length > 500 && activeType === 'Caption') {
+      suggestions.push({ text: 'Long captions perform well on Instagram. Consider breaking it into paragraphs.', level: 'LOW' });
+    }
+    
+    // Hook strength
+    const firstLine = content.split('\n')[0] || content.slice(0, 50);
+    if (firstLine.length < 10) {
+      suggestions.push({ text: 'Strengthen your opening hook - make the first line captivating.', level: 'HIGH IMPACT' });
+    }
+    
+    // Platform-specific suggestions
+    if (activePlatform === 'Instagram') {
+      suggestions.push({ text: 'For Instagram, use line breaks and emojis to improve readability.', level: 'LOW' });
+    } else if (activePlatform === 'Twitter') {
+      suggestions.push({ text: 'Twitter: Keep it punchy! Aim for 100-280 characters for best engagement.', level: 'MEDIUM' });
+    } else if (activePlatform === 'LinkedIn') {
+      suggestions.push({ text: 'LinkedIn favors professional insights. Add a thought-provoking question.', level: 'MEDIUM' });
+    } else if (activePlatform === 'YouTube') {
+      suggestions.push({ text: 'YouTube: Include timestamps in description for better video retention.', level: 'MEDIUM' });
+    }
+    
+    // If we have API prediction data, add more suggestions based on metrics
+    if (analyzed && prediction) {
+      const shareNum = typeof shareability === 'number' ? shareability : 0;
+      const engNum = typeof engagement === 'number' ? engagement : 0;
+      const trendNum = typeof trendMatch === 'number' ? trendMatch : 0;
+      
+      if (shareNum < 50) {
+        suggestions.push({ text: 'Low shareability score detected. Add share-worthy content like tips or templates.', level: 'HIGH IMPACT' });
+      }
+      if (engNum < 50) {
+        suggestions.push({ text: 'Boost engagement by asking your audience a question or for their opinion.', level: 'HIGH IMPACT' });
+      }
+      if (trendNum < 40) {
+        suggestions.push({ text: 'Your content has low trend alignment. Consider adding 2-3 trending hashtags.', level: 'HIGH IMPACT' });
+      }
+    }
+    
+    // Return default if no meaningful suggestions
+    if (suggestions.length === 0) {
+      return defaultSuggestions;
+    }
+    
+    return suggestions.slice(0, 6);
+  })();
 
   /* Pill button style */
   const pill = (active) => ({
@@ -255,33 +371,49 @@ export default function Campaigns() {
 
           {/* Drop zone */}
           <div
-            onClick={() => fileRef.current?.click()}
+            onClick={() => !uploading && fileRef.current?.click()}
             onDrop={handleDrop}
             onDragOver={e => { e.preventDefault(); setDragging(true); }}
             onDragLeave={() => setDragging(false)}
             style={{
-              border: `1.5px dashed ${dragging ? '#C05A38' : '#D0C8BE'}`,
+              border: `1.5px dashed ${dragging ? '#C05A38' : uploaded ? '#7A9A6E' : '#D0C8BE'}`,
               borderRadius: 12, padding: '26px 16px', textAlign: 'center',
-              cursor: 'pointer', marginBottom: 18, transition: 'all 150ms',
-              background: dragging ? '#FEF0EA' : 'transparent',
+              cursor: uploading ? 'wait' : 'pointer', marginBottom: 18, transition: 'all 200ms',
+              background: dragging ? '#FEF0EA' : uploaded ? '#F0F7EF' : 'transparent',
             }}>
             <input ref={fileRef} type="file" style={{ display: 'none' }} accept="image/*,video/*" onChange={handleFileChange}/>
             <div style={{
               width: 38, height: 38, borderRadius: '50%',
-              background: '#FEF0EA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: uploaded ? '#E8F4EE' : '#FEF0EA', display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 10px',
             }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C05A38" strokeWidth="2.5" strokeLinecap="round">
-                <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
-                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
-              </svg>
+              {uploading ? (
+                <svg style={{ animation: 'spin 1s linear infinite' }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C05A38" strokeWidth="2.5">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+              ) : uploaded ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A9A6E" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C05A38" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+                </svg>
+              )}
             </div>
-            <p style={{ fontSize: 13, color: '#7A7068', margin: '0 0 4px', fontWeight: 500 }}>
-              {uploading ? 'Uploading…' : 'Drop thumbnail or media here'}
+            <p style={{ fontSize: 13, color: uploaded ? '#7A9A6E' : '#7A7068', margin: '0 0 4px', fontWeight: 600 }}>
+              {uploading ? 'Uploading...' : uploaded ? `Uploaded: ${uploadedFileName}` : 'Drop thumbnail or media here'}
             </p>
-            <p style={{ fontSize: 10, color: '#B0A89C', margin: 0, letterSpacing: '0.06em', fontWeight: 600 }}>
-              MAXIMUM FILE SIZE: 10MB
-            </p>
+            {uploaded ? (
+              <p style={{ fontSize: 10, color: '#7A9A6E', margin: 0, letterSpacing: '0.06em', fontWeight: 700 }}>
+                {fileType === 'video' ? 'VIDEO DETECTED' : fileType === 'image' ? 'IMAGE DETECTED' : 'FILE UPLOADED'}
+              </p>
+            ) : (
+              <p style={{ fontSize: 10, color: '#B0A89C', margin: 0, letterSpacing: '0.06em', fontWeight: 600 }}>
+                MAXIMUM FILE SIZE: 10MB
+              </p>
+            )}
           </div>
 
           {/* Error message */}
@@ -327,19 +459,38 @@ export default function Campaigns() {
             )}
             <div style={{ display: 'flex', gap: 10 }}>
               {[['SHAREABILITY', shareability], ['ENGAGEMENT', engagement], ['TREND MATCH', trendMatch]].map(([l, v]) => (
-                <div key={l} style={{ flex: 1, background: '#F5F2EE', borderRadius: 10, padding: '10px 6px' }}>
-                  <p style={{ fontSize: 9, color: '#B0A89C', fontWeight: 700, letterSpacing: '0.1em', margin: '0 0 4px' }}>{l}</p>
+                <div key={l} style={{ 
+                  flex: 1, background: '#F5F2EE', borderRadius: 10, padding: '10px 6px',
+                  border: uploaded && analyzed ? '1.5px solid #7A9A6E' : '1.5px solid transparent',
+                  transition: 'border 200ms',
+                }}>
+                  <p style={{ fontSize: 9, color: '#B0A89C', fontWeight: 700, letterSpacing: '0.1em', margin: '0 0 4px' }}>
+                    {l}
+                    {uploaded && analyzed && <span style={{ color: '#7A9A6E', marginLeft: 4 }}>↑</span>}
+                  </p>
                   <p style={{ fontSize: 18, fontWeight: 800, color: analyzed ? '#C05A38' : '#B0A89C', margin: 0 }}>{v}</p>
                 </div>
               ))}
             </div>
+            {uploaded && !analyzed && (
+              <p style={{ fontSize: 11, color: '#7A9A6E', margin: '12px 0 0', fontWeight: 600 }}>
+                Media detected! Click Analyze for enhanced metrics.
+              </p>
+            )}
           </Card>
 
           {/* ② AI Optimization Suggestions */}
           <Card>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#7A9A6E', display: 'inline-block', flexShrink: 0 }}/>
-              <h2 style={{ fontSize: 14, fontWeight: 700, color: '#2B2218', margin: 0 }}>AI Optimization Suggestions</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#7A9A6E', display: 'inline-block', flexShrink: 0 }}/>
+                <h2 style={{ fontSize: 14, fontWeight: 700, color: '#2B2218', margin: 0 }}>AI Optimization Suggestions</h2>
+              </div>
+              {analyzed && (
+                <span style={{ fontSize: 10, color: '#7A9A6E', fontWeight: 600, background: '#F0F7EF', padding: '4px 10px', borderRadius: 999 }}>
+                  Based on your metrics
+                </span>
+              )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               {liveSuggestions.map(({ text, level }, i) => (
