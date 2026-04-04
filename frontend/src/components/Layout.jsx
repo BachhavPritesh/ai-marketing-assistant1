@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, TrendingUp, Zap, BarChart2, Archive,
   Bell, Settings, Menu, X, Plus, SlidersHorizontal,
   ChevronDown, User, LogOut
 } from 'lucide-react';
+import { getUserInitials } from '../utils/userDataGenerator';
 
 /* ── Botanical top-right decoration ── */
 const BotanicalTR = () => (
@@ -44,8 +45,25 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [userName, setUserName] = useState('Creator');
+  const [userEmail, setUserEmail] = useState('');
+  const [userRole, setUserRole] = useState('Creator');
+  const [profileImage, setProfileImage] = useState('');
 
   const isActive = (path) => location.pathname === path;
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('viralPulseUser');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setUserName(user?.name || 'Creator');
+      setUserEmail(user?.email || '');
+      setUserRole(user?.role || 'Creator');
+      setProfileImage(user?.profileImage || '');
+    }
+  }, []);
+
+  const initials = getUserInitials(userName);
 
   return (
     <div style={{ minHeight: '100vh', background: '#EDE8DF', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -120,12 +138,25 @@ export default function Layout({ children }) {
               cursor: 'pointer', transition: 'background 150ms',
               background: (isActive('/settings') || profileOpen) ? '#E8E0D4' : 'transparent',
             }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #C05A38, #7A9A6E)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', fontSize: 13, fontWeight: 700, flexShrink: 0,
-              }}>PS</div>
+              {profileImage ? (
+                <img 
+                  src={profileImage} 
+                  alt={userName} 
+                  style={{ 
+                    width: 32, height: 32, 
+                    borderRadius: '50%', 
+                    objectFit: 'cover',
+                    flexShrink: 0,
+                  }} 
+                />
+              ) : (
+                <div style={{
+                  width: 32, height: 32, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #C05A38, #7A9A6E)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: 13, fontWeight: 700, flexShrink: 0,
+                }}>{initials}</div>
+              )}
               <ChevronDown size={14} style={{ color: '#7A7068', transform: profileOpen ? 'rotate(180deg)' : 'none', transition:'transform 150ms' }}/>
             </div>
 
@@ -133,8 +164,8 @@ export default function Layout({ children }) {
             {profileOpen && (
               <div style={{
                 position: 'absolute', top: '100%', right: 0, 
-                paddingTop: 8, // Bridge the gap for hover
-                width: 180, zIndex: 200, animation: 'fadeIn 0.2s ease',
+                paddingTop: 8,
+                width: 240, zIndex: 200, animation: 'fadeIn 0.2s ease',
               }}>
                 <div style={{
                   background: '#FAF7F2', border: '1px solid #DDD6CA',
@@ -146,6 +177,38 @@ export default function Layout({ children }) {
                     .pm-item { display: flex; alignItems: center; gap: 10px; padding: 12px 16px; font-size: 13px; color: #2B2218; text-decoration: none; transition: background 150ms; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
                     .pm-item:hover { background: #F0EBE3; color: #C05A38; }
                   `}</style>
+                  
+                  {/* User Info Header */}
+                  <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #E8E0D4' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                      {profileImage ? (
+                        <img 
+                          src={profileImage} 
+                          alt={userName} 
+                          style={{ 
+                            width: 44, height: 44, 
+                            borderRadius: '50%', 
+                            objectFit: 'cover',
+                            border: '2px solid #E8E0D4',
+                          }} 
+                        />
+                      ) : (
+                        <div style={{
+                          width: 44, height: 44, borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #C05A38, #7A9A6E)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: '#fff', fontSize: 16, fontWeight: 700,
+                          border: '2px solid #E8E0D4',
+                        }}>{initials}</div>
+                      )}
+                      <div style={{ overflow: 'hidden' }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#2B2218', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userName}</div>
+                        <div style={{ fontSize: 12, color: '#7A7068', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userEmail}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#C05A38', background: '#FEF0EA', padding: '3px 8px', borderRadius: 4, display: 'inline-block' }}>{userRole}</div>
+                  </div>
+
                   <Link to="/profile" className="pm-item" onClick={() => setProfileOpen(false)}>
                     <User size={15} color="#7A7068" /> View Profile
                   </Link>
@@ -153,7 +216,12 @@ export default function Layout({ children }) {
                     <Settings size={15} color="#7A7068" /> Settings
                   </Link>
                   <div style={{ height: 1, background: '#DDD6CA', margin: '4px 0' }} />
-                  <button className="pm-item" style={{ color: '#C05A38' }} onClick={() => console.log('Logout')}>
+                  <button className="pm-item" style={{ color: '#C05A38' }} onClick={() => {
+                    localStorage.removeItem('viralPulseToken');
+                    localStorage.removeItem('viralPulseUser');
+                    setProfileOpen(false);
+                    navigate('/login');
+                  }}>
                     <LogOut size={15} /> Logout
                   </button>
                 </div>

@@ -62,9 +62,22 @@ export default function Login() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
+    const userParam = params.get('user');
+    
     if (token) {
       localStorage.setItem('viralPulseToken', token);
+      
+      if (userParam) {
+        try {
+          const userData = JSON.parse(decodeURIComponent(userParam));
+          localStorage.setItem('viralPulseUser', JSON.stringify(userData));
+        } catch (e) {
+          console.error('Failed to parse user data:', e);
+        }
+      }
+      
       params.delete('token');
+      params.delete('user');
       window.history.replaceState({}, document.title, window.location.pathname + (params.toString() ? `?${params.toString()}` : ''));
       navigate('/dashboard');
     }

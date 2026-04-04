@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   User, Link2, BarChart3, Zap, Bell, Palette, Shield, 
   Camera, Check, LogOut, ChevronRight, ArrowUpRight, 
@@ -175,8 +175,8 @@ const FormField = ({ label, type = 'text', placeholder, defaultValue, icon: Icon
 
 /* ─── SECTION CONTENT COMPONENTS ─── */
 
-const PersonalInfo = () => {
-  const [selectedRole, setSelectedRole] = useState('Creator');
+const PersonalInfo = ({ userData }) => {
+  const [selectedRole, setSelectedRole] = useState(userData?.role || 'Creator');
   const [selectedNiches, setSelectedNiches] = useState(['Tech', 'AI & SaaS']);
 
   const toggleNiche = (n) => {
@@ -184,11 +184,19 @@ const PersonalInfo = () => {
     else if (selectedNiches.length < 5) setSelectedNiches(prev => [...prev, n]);
   };
 
+  const userInitial = userData?.name ? userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : 'U';
+  const userEmail = userData?.email || '';
+  const username = userEmail ? '@' + userEmail.split('@')[0] : '@user';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         <div style={{ position: 'relative', width: 80, height: 80 }}>
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #C9A96E)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24, fontWeight: 800 }}>P</div>
+          {userData?.profileImage ? (
+            <img src={userData.profileImage} alt={userData.name} style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #C9A96E)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24, fontWeight: 800 }}>{userInitial}</div>
+          )}
           <button style={{ position: 'absolute', bottom: 0, right: 0, width: 28, height: 28, borderRadius: '50%', background: COLORS.primary, border: '2px solid white', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <Camera size={14}/>
           </button>
@@ -201,9 +209,9 @@ const PersonalInfo = () => {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-        <FormField label="Full Name" defaultValue="Pritesh Sharma" />
-        <FormField label="Username" defaultValue="pritesh_cg" />
-        <FormField label="Email Address" defaultValue="pritesh@viralpulse.ai" />
+        <FormField label="Full Name" defaultValue={userData?.name || 'Creator'} />
+        <FormField label="Username" defaultValue={username} />
+        <FormField label="Email Address" defaultValue={userEmail} />
         <FormField label="Phone Number" defaultValue="+91 98765 43210" />
         <div style={{ width: '100%' }}>
           <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: COLORS.text, marginBottom: 8 }}>Bio</label>
@@ -699,8 +707,38 @@ const PrivacySecurity = () => {
 
 export default function Settings() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isProfileView = location.pathname.includes('/profile');
   
+  const [userData, setUserData] = useState({
+    name: 'Creator',
+    email: '',
+    role: 'Creator',
+    profileImage: '',
+    username: ''
+  });
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('viralPulseUser');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      const username = user.email ? '@' + user.email.split('@')[0] : '@user';
+      setUserData({
+        name: user.name || 'Creator',
+        email: user.email || '',
+        role: user.role || 'Creator',
+        profileImage: user.profileImage || '',
+        username: username
+      });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('viralPulseToken');
+    localStorage.removeItem('viralPulseUser');
+    navigate('/login');
+  };
+
   const filteredNavItems = useMemo(() => {
     return isProfileView ? PROFILE_ITEMS : SETTINGS_ITEMS;
   }, [isProfileView]);
@@ -757,17 +795,27 @@ export default function Settings() {
                   className="avatar-container"
                   style={{ position: 'relative', width: 100, height: 100, margin: '0 auto 16px', cursor: 'pointer' }}
                 >
-                  <div style={{ width: 100, height: 100, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #7A9A6E)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 28, fontWeight: 800 }}>PS</div>
+                  {userData.profileImage ? (
+                    <img 
+                      src={userData.profileImage} 
+                      alt={userData.name}
+                      style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '3px solid #E8E0D4' }} 
+                    />
+                  ) : (
+                    <div style={{ width: 100, height: 100, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #7A9A6E)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 28, fontWeight: 800 }}>
+                      {userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                    </div>
+                  )}
                   <div className="avatar-hover-overlay" style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', opacity: 0, transition: 'opacity 150ms' }}>
                     <div style={{ width: 28, height: 28, borderRadius: '50%', background: COLORS.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Camera size={14}/>
                     </div>
                   </div>
                 </div>
-                <h3 style={{ margin: '0 0 4px', fontSize: 17, fontWeight: 800, color: COLORS.text }}>Pritesh Sharma</h3>
-                <p style={{ margin: '0 0 16px', fontSize: 13, color: COLORS.muted }}>@pritesh_cg</p>
+                <h3 style={{ margin: '0 0 4px', fontSize: 17, fontWeight: 800, color: COLORS.text }}>{userData.name}</h3>
+                <p style={{ margin: '0 0 16px', fontSize: 13, color: COLORS.muted }}>{userData.username}</p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
-                  <span style={{ padding: '4px 12px', borderRadius: 999, background: COLORS.chip, color: COLORS.text, fontSize: 11, fontWeight: 700 }}>✦ CREATOR</span>
+                  <span style={{ padding: '4px 12px', borderRadius: 999, background: COLORS.chip, color: COLORS.text, fontSize: 11, fontWeight: 700 }}>✦ {userData.role.toUpperCase()}</span>
                   <span style={{ padding: '4px 12px', borderRadius: 999, background: COLORS.primary, color: 'white', fontSize: 11, fontWeight: 700 }}>🏆 PRO</span>
                 </div>
                 
@@ -802,7 +850,7 @@ export default function Settings() {
 
             {/* Logout */}
             <div style={{ padding: '12px' }}>
-              <button style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 24px', border: 'none', background: 'none', color: COLORS.primary, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 24px', border: 'none', background: 'none', color: COLORS.primary, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
                 <LogOut size={16}/> Log Out
               </button>
             </div>
@@ -813,7 +861,7 @@ export default function Settings() {
         <main className="profile-content">
           {activeSection === 'Personal Info' && (
             <SectionCard title="Personal Information" subtitle="Update your public creator profile">
-              <PersonalInfo />
+              <PersonalInfo userData={userData} />
             </SectionCard>
           )}
           {activeSection === 'Connected Accounts' && (
@@ -853,9 +901,15 @@ export default function Settings() {
       <div className="mobile-profile-hero" style={{ display: 'none', padding: '0 20px 20px', textAlign: 'center' }}>
          {isProfileView && (
            <>
-             <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #7A9A6E)', margin: '20px auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24, fontWeight: 800 }}>PS</div>
-             <h3 style={{ margin: '0 0 2px', fontSize: 18, fontWeight: 800, color: COLORS.text }}>Pritesh Sharma</h3>
-             <p style={{ margin: '0 0 16px', fontSize: 13, color: COLORS.muted }}>@pritesh_cg</p>
+             {userData.profileImage ? (
+               <img src={userData.profileImage} alt={userData.name} style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', margin: '20px auto 12px', border: '3px solid #E8E0D4' }} />
+             ) : (
+               <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #C05A38, #7A9A6E)', margin: '20px auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24, fontWeight: 800 }}>
+                 {userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+               </div>
+             )}
+             <h3 style={{ margin: '0 0 2px', fontSize: 18, fontWeight: 800, color: COLORS.text }}>{userData.name}</h3>
+             <p style={{ margin: '0 0 16px', fontSize: 13, color: COLORS.muted }}>{userData.username}</p>
            </>
          )}
          {!isProfileView && (
